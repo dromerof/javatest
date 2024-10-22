@@ -1,5 +1,6 @@
 package dromerof.payments;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -7,14 +8,21 @@ import static org.junit.Assert.*;
 
 public class PaymentProcessorTest {
 
+    private PaymentGateway paymentGateway;
+    private PaymentProcessor paymentProcessor;
+
+    @Before
+    public void setup() {
+        paymentGateway = Mockito.mock(PaymentGateway.class);
+        paymentProcessor = new PaymentProcessor(paymentGateway);
+    }
+
+
     @Test
     public void payment_is_correct() {
 
-        PaymentGateway paymentGateway = Mockito.mock(PaymentGateway.class);
-
-        Mockito.when(paymentGateway.requestPaymet(Mockito.any())).thenReturn(new PaymentResponse(PaymentResponse.PaymentStatus.OK));
-
-        PaymentProcessor paymentProcessor = new PaymentProcessor(paymentGateway);
+        Mockito.when(paymentGateway.requestPaymet(Mockito.any()))
+                .thenReturn(new PaymentResponse(PaymentResponse.PaymentStatus.OK));
 
         assertTrue(paymentProcessor.makePayment(1000));
     }
@@ -22,11 +30,8 @@ public class PaymentProcessorTest {
     @Test
     public void payment_is_wrong() {
 
-        PaymentGateway paymentGateway = Mockito.mock(PaymentGateway.class);
-
-        Mockito.when(paymentGateway.requestPaymet(Mockito.any())).thenReturn(new PaymentResponse(PaymentResponse.PaymentStatus.ERROR));
-
-        PaymentProcessor paymentProcessor = new PaymentProcessor(paymentGateway);
+        Mockito.when(paymentGateway.requestPaymet(Mockito.any()))
+                .thenReturn(new PaymentResponse(PaymentResponse.PaymentStatus.ERROR));
 
         assertFalse(paymentProcessor.makePayment(1000));
     }
